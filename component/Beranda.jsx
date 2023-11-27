@@ -1,19 +1,58 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native'
-import React, { useState, useEffect } from 'react'
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import Quran from './Quran';
-
-const Drawer = createDrawerNavigator();
-
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
 
 const Beranda = () => {
+    //1. Buat state / penyimpanan data
+    const [dataQuran, setDataQuran] = useState(null);
+    //2. Fungsi untuk mengambil data dari API
+    const getData = async () => {
+        try {
+            const respon = await fetch('https://equran.id/api/v2/surat'); //koneksi ke API
+            const hasil = await respon.json();
+            //console.log(hasil.data);
+            setDataQuran(hasil.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    //3. load data dari fungsi getData pake useEffect
+    useEffect(() => {
+        getData();
+    });
+
     return (
-        <Drawer.Navigator>
-            <Drawer.Screen name="Quran" component={Quran} />
-        </Drawer.Navigator>
-    )
-}
+        <View>
+            <ScrollView>
+                {dataQuran?.map((data, index) => {
+                    return (
+                        <TouchableOpacity key={index}>
+                            <Text style={styles.ayat}>
+                                {data.nomor} - {data.nama} - {data.namaLatin}
+                            </Text>
+                        </TouchableOpacity>
+                    );
+                })}
+            </ScrollView>
+        </View>
+    );
+};
 
-export default Beranda
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    text: {
+        textAlign: 'center',
+        fontSize: 18,
+    },
+    verse: {
+        textAlign: 'center',
+        fontSize: 16,
+        marginTop: 10,
+        fontStyle: 'italic',
+    },
+});
 
-const styles = StyleSheet.create({})
+export default Beranda;
