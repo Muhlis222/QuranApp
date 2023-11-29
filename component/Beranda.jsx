@@ -2,13 +2,17 @@ import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-nati
 import React, { useState, useEffect } from 'react';
 
 const Beranda = () => {
-    //1. Buat state / penyimpanan data
+    //1. Siapkan state untuk menampung data
     const [dataQuran, setDataQuran] = useState(null);
-    //2. Fungsi untuk mengambil data dari API
-    const getData = async () => {
+    //2. Siapkan fungsi untuk mengambil data dari API
+    const ambilData = async () => {
         try {
-            const respon = await fetch('https://equran.id/api/v2/surat'); //koneksi ke API
+            // connect ke API
+            const respon = await fetch('https://equran.id/api/v2/surat');
+            // ubah data ke bentuk json
             const hasil = await respon.json();
+
+            // simpan data ke state
             //console.log(hasil.data);
             setDataQuran(hasil.data);
         } catch (error) {
@@ -17,11 +21,11 @@ const Beranda = () => {
     };
     //3. load data dari fungsi getData pake useEffect
     useEffect(() => {
-        getData();
+        ambilData();
     });
 
     return (
-        <View>
+        <View style={styles.box}>
             <ScrollView>
                 {dataQuran?.map((data, index) => {
                     return (
@@ -52,6 +56,9 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginTop: 10,
         fontStyle: 'italic',
+    },
+    box: {
+        padding: '10',
     },
 });
 
